@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SessionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Workspace {
+  id                       String   @id @default(cuid())
+
+  slackTeamId              String   @unique
+  slackTeamName            String
+
+  botToken                 String
+  botUserId                String
+
+  installedBySlackUserId   String
+
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  users                    User[]
+  standupConfig            StandupConfig?
+  sessions                 StandupSession[]
+
+  @@index([slackTeamId])
+}
+
+model User {
+  id              String   @id @default(cuid())
+
+  workspaceId     String
+  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  slackUserId     String
+  slackUserName   String
+  displayName     String
+
+  timezone        String?
+
+  isBot           Boolean @default(false)
+  isActive        Boolean @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  responses       StandupResponse[]
+
+  @@unique([workspaceId, slackUserId])
+  @@index([workspaceId])
+}
+
+model StandupConfig {
+  id                String   @id @default(cuid())
+
+  workspaceId        String   @unique
+  workspace          Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  channelId          String
+
+  standupHour        Int
+  standupMinute      Int
+
+  timezone           String
+
+  reminderMinutes    Int @default(30)
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  questions          StandupQuestion[]
+}
+
+model StandupQuestion {
+  id                  String   @id @default(cuid())
+
+  standupConfigId      String
+  standupConfig        StandupConfig @relation(fields: [standupConfigId], references: [id], onDelete: Cascade)
+
+  question             String
+
+  order                Int
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  answers              Answer[]
+
+  @@index([standupConfigId])
+}
+
+model StandupSession {
+  id                  String   @id @default(cuid())
+
+  workspaceId          String
+  workspace            Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  scheduledDate        DateTime
+
+  status               SessionStatus @default(PENDING)
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  responses            StandupResponse[]
+  summary              StandupSummary?
+
+  @@unique([workspaceId, scheduledDate])
+  @@index([workspaceId])
+  @@index([scheduledDate])
+}
+
+model StandupResponse {
+  id                  String   @id @default(cuid())
+
+  sessionId           String
+  session             StandupSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  userId              String
+  user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  submittedAt         DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  answers             Answer[]
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+  @@index([userId])
+}
+
+model Answer {
+  id                  String   @id @default(cuid())
+
+  responseId          String
+  response            StandupResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  questionId          String
+  question            StandupQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  answer              String
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([responseId])
+  @@index([questionId])
+}
+
+model StandupSummary {
+  id                  String   @id @default(cuid())
+
+  sessionId           String   @unique
+  session             StandupSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  content             String
+
+  generatedAt         DateTime @default(now())
+
+  @@index([sessionId])
+}
