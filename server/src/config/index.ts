@@ -8,4 +8,10 @@ export const config = {
   DATABASE_URL: process.env.DATABASE_URL || "",
   SERVICE_NAME: process.env.SERVICER_NAME || "dailysync-server",
   LOG_LEVEL: process.env.LOG_LEVEL || "info",
+  SLACK_APP_TOKEN: process.env.SLACK_APP_TOKEN || "",
+  SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID || "",
+  SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET || "",
+  SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET || "",
+  SLACK_BOT_SCOPE: process.env.SLACK_BOT_SCOPE || "",
+  BACKEND_URL: process.env.BACKEND_URL || "",
 };

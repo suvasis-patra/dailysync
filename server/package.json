@@ -23,6 +23,8 @@
   "dependencies": {
     "@prisma/adapter-neon": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@slack/bolt": "^4.7.3",
+    "axios": "^1.18.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
