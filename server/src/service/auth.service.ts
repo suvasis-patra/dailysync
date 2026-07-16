@@ -1,7 +1,8 @@
 import axios from "axios";
-import { config } from "../config";
-import { SlackOAuthResponse } from "../utils/types/slack";
+
+import { config } from "../config/index";
 import { prisma } from "../config/prisma";
+import { SlackOAuthResponse } from "../utils/types/slack";
 
 export const onboardNewWorkSpace = async ({
   code,
@@ -10,7 +11,6 @@ export const onboardNewWorkSpace = async ({
   code: string;
   state: string;
 }) => {
-  // check if the state is valid first
   try {
     const response = await axios.post(
       "https://slack.com/api/oauth.v2.access",

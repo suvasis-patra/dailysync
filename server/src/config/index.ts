@@ -12,4 +12,6 @@ export const config = {
   SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID || "",
   SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET || "",
   SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET || "",
+  SLACK_BOT_SCOPE: process.env.SLACK_BOT_SCOPE || "",
+  BACKEND_URL: process.env.BACKEND_URL || "",
 };
