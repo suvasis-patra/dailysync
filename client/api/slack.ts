@@ -1,11 +1,4 @@
-import { axiosInstance } from "@/lib/api";
-
-export const initiateSlackAuth = async () => {
-  try {
-    const response = await axiosInstance.get("/slack/auth");
-    console.log(response.data);
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const initiateSlackAuth = () => {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8080/api/v1";
+  window.location.href = `${backendUrl}/slack/auth`;
 };
