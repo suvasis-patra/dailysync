@@ -40,7 +40,8 @@ export const initiateSlackAuth = asyncHandler(
     slackAuthUrl.searchParams.set("client_id", config.SLACK_CLIENT_ID);
     slackAuthUrl.searchParams.set("scope", scope);
     slackAuthUrl.searchParams.set("state", state);
-
+    const redirectUri = `${config.BACKEND_URL.replace(/\/$/, "")}/api/v1/slack/oauth_redirect`;
+    slackAuthUrl.searchParams.set("redirect_uri", redirectUri);
     res.redirect(slackAuthUrl.toString());
   },
 );
