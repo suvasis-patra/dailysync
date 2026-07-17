@@ -14,4 +14,5 @@ export const config = {
   SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET || "",
   SLACK_BOT_SCOPE: process.env.SLACK_BOT_SCOPE || "",
   BACKEND_URL: process.env.BACKEND_URL || "",
+  FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000",
 };

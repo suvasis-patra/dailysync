@@ -6,5 +6,5 @@ import {
 
 export const authRouter = Router();
 
-authRouter.post("/oauth_redirect", onboardWorkSpace);
+authRouter.get("/oauth_redirect", onboardWorkSpace);
 authRouter.get("/auth", initiateSlackAuth);
