@@ -12,12 +12,14 @@ export const onboardNewWorkSpace = async ({
   state: string;
 }) => {
   try {
+    const redirectUri = `${config.BACKEND_URL.replace(/\/$/, "")}/api/v1/slack/oauth_redirect`;
     const response = await axios.post(
       "https://slack.com/api/oauth.v2.access",
       new URLSearchParams({
         client_id: config.SLACK_CLIENT_ID,
         client_secret: config.SLACK_CLIENT_SECRET,
         code,
+        redirect_uri: redirectUri,
       }),
       {
         headers: {
