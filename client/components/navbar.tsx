@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { scrollToId } from "@/lib";
 import { NAV_LINKS } from "@/lib/constants";
 import Image from "next/image";
+import { initiateSlackAuth } from "@/api/slack";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -64,7 +65,7 @@ export default function NavBar() {
 
         <div className="hidden md:block">
           <button
-            onClick={() => go("cta")}
+            onClick={async () => await initiateSlackAuth()}
             data-testid="nav-cta-btn"
             className="rounded-full flex items-center gap-2 cursor-pointer bg-[#ccff00] px-5 py-2 text-sm font-semibold text-[#0a0a0a] transition-colors hover:bg-[#b3e600]"
           >
@@ -105,10 +106,16 @@ export default function NavBar() {
               ))}
               <button
                 onClick={() => go("cta")}
-                className="mt-2 rounded-full bg-[#ccff00] px-5 py-2.5 text-sm font-semibold text-[#0a0a0a]"
+                className="mt-2 rounded-full flex items-center justify-center gap-4 cursor-pointer bg-[#ccff00] px-5 py-2.5 text-sm font-semibold text-[#0a0a0a]"
                 data-testid="nav-mobile-cta"
               >
-                Get early access
+                <Image
+                  src={"slack_logo.svg"}
+                  alt="slack"
+                  height={20}
+                  width={20}
+                />
+                Get Started
               </button>
             </div>
           </motion.div>
