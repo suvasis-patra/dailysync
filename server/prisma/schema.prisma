@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  // output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -14,123 +13,146 @@ enum SessionStatus {
 }
 
 model Workspace {
-  id                       String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  slackTeamId              String   @unique
-  slackTeamName            String
+  slackTeamId String @unique
+  slackTeamName String
+  botToken String
+  botUserId String
+  installedBySlackUserId String
 
-  botToken                 String
-  botUserId                String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  installedBySlackUserId   String
-
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-
-  users                    User[]
-  standupConfig            StandupConfig?
-  sessions                 StandupSession[]
+  channels Channel[]
+  users User[]
 
   @@index([slackTeamId])
 }
 
+model Channel {
+  id String @id @default(cuid())
+
+  workspaceId String
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  slackChannelId String
+  name String
+  isPrivate Boolean
+  isArchived Boolean @default(false)
+  isMember Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  standupConfig StandupConfig?
+
+  members ChannelMember[]
+
+  @@unique([workspaceId, slackChannelId])
+  @@index([workspaceId])
+}
+
 model User {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  workspaceId     String
-  workspace       Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  slackUserId String
+  slackUserName String
+  displayName String
+  timezone String?
+  isBot Boolean @default(false)
+  isActive Boolean @default(true)
 
-  slackUserId     String
-  slackUserName   String
-  displayName     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  timezone        String?
+  channels ChannelMember[]
 
-  isBot           Boolean @default(false)
-  isActive        Boolean @default(true)
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  responses       StandupResponse[]
+  responses StandupResponse[]
 
   @@unique([workspaceId, slackUserId])
   @@index([workspaceId])
 }
 
+model ChannelMember {
+  channelId String
+  userId String
+
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+
+  @@id([channelId, userId])
+  @@index([userId])
+}
+
 model StandupConfig {
-  id                String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  workspaceId        String   @unique
-  workspace          Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  channelId String @unique
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  standupHour Int
+  standupMinute Int
+  timezone String
+  reminderMinutes Int?
 
-  channelId          String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  standupHour        Int
-  standupMinute      Int
-
-  timezone           String
-
-  reminderMinutes    Int @default(30)
-
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  questions          StandupQuestion[]
+  questions StandupQuestion[]
+  sessions StandupSession[]
 }
 
 model StandupQuestion {
-  id                  String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  standupConfigId      String
-  standupConfig        StandupConfig @relation(fields: [standupConfigId], references: [id], onDelete: Cascade)
+  standupConfigId String
+  standupConfig StandupConfig @relation(fields: [standupConfigId], references: [id], onDelete: Cascade)
 
-  question             String
+  question String
+  order Int @unique
 
-  order                Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  answers              Answer[]
+  answers Answer[]
 
   @@index([standupConfigId])
+  @@unique([standupConfigId, order])
 }
 
 model StandupSession {
-  id                  String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  workspaceId          String
-  workspace            Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  standupConfigId String
+  standupConfig StandupConfig @relation(fields: [standupConfigId], references: [id], onDelete: Cascade)
+  scheduledDate DateTime
+  status SessionStatus @default(PENDING)
 
-  scheduledDate        DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  status               SessionStatus @default(PENDING)
+  responses StandupResponse[]
+  summary StandupSummary?
 
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  responses            StandupResponse[]
-  summary              StandupSummary?
-
-  @@unique([workspaceId, scheduledDate])
-  @@index([workspaceId])
+  @@unique([standupConfigId, scheduledDate])
   @@index([scheduledDate])
 }
 
 model StandupResponse {
-  id                  String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  sessionId           String
-  session             StandupSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+  session StandupSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId              String
-  user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submittedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  submittedAt         DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  answers             Answer[]
+  answers Answer[]
 
   @@unique([sessionId, userId])
   @@index([sessionId])
@@ -138,32 +160,30 @@ model StandupResponse {
 }
 
 model Answer {
-  id                  String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  responseId          String
-  response            StandupResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  responseId String
+  response StandupResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
 
-  questionId          String
-  question            StandupQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  question StandupQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  answer              String
+  answer String
 
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([responseId])
   @@index([questionId])
 }
 
 model StandupSummary {
-  id                  String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  sessionId           String   @unique
-  session             StandupSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String @unique
+  session StandupSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  content             String
+  content String
 
-  generatedAt         DateTime @default(now())
-
-  @@index([sessionId])
+  generatedAt DateTime @default(now())
 }

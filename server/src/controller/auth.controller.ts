@@ -3,9 +3,7 @@ import { Request, Response } from "express";
 
 import { config } from "../config/index";
 import { asyncHandler } from "../utils/handler";
-import { ApiResponse } from "../utils/response";
-import { BadRequestError } from "../utils/error";
-import { onboardNewWorkSpace } from "../service/auth.service";
+import { installWorkSpace } from "../service/oauth.service";
 
 export const onboardWorkSpace = asyncHandler(
   async (req: Request, res: Response) => {
@@ -15,14 +13,36 @@ export const onboardWorkSpace = asyncHandler(
 
     res.clearCookie("slack_auth_state");
 
+    const frontendBaseUrl = config.FRONTEND_URL.replace(/\/$/, "");
+    const redirectUrl = new URL(`${frontendBaseUrl}/oauth-status`);
+
     if (!code || !state) {
-      throw new BadRequestError("missing code from slack");
+      redirectUrl.searchParams.set("oauth", "error");
+      redirectUrl.searchParams.set("message", "Missing Slack OAuth code");
+      return res.redirect(redirectUrl.toString());
     }
+
     if (!cookieState || state !== cookieState) {
-      throw new BadRequestError("CSRF verification failed: state mismatch");
+      redirectUrl.searchParams.set("oauth", "error");
+      redirectUrl.searchParams.set("message", "CSRF verification failed");
+      return res.redirect(redirectUrl.toString());
     }
-    await onboardNewWorkSpace({ code, state });
-    return res.redirect(config.FRONTEND_URL);
+
+    try {
+      const result = await installWorkSpace(code);
+      redirectUrl.searchParams.set("oauth", "success");
+      redirectUrl.searchParams.set("workspaceId", result.slackTeamId);
+      return res.redirect(redirectUrl.toString());
+    } catch (error) {
+      redirectUrl.searchParams.set("oauth", "error");
+      redirectUrl.searchParams.set(
+        "message",
+        error instanceof Error
+          ? error.message
+          : "Slack workspace installation failed",
+      );
+      return res.redirect(redirectUrl.toString());
+    }
   },
 );
 
