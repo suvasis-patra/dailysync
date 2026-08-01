@@ -10,7 +10,7 @@ import { standupConfigRouter } from "./route/standup-config.route";
 
 const app = express();
 
-app.use(cors({ origin: ["*"] }));
+app.use(cors({ origin: "*" }));
 app.use(cookieParser());
 app.use(reqLogger);
 app.use(express.json());
