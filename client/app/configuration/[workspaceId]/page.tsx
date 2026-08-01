@@ -1,10 +1,10 @@
 "use client";
 import ConfigForm from "@/components/config-form";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 export default function Page() {
-  const router = useRouter();
-  const workspaceId = router.query.workpsaceId;
+  const params = useParams();
+  const workspaceId = params?.workspaceId;
   if (!workspaceId) {
     return null;
   }
