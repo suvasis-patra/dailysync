@@ -1,26 +1,179 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+
+  /* Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-destructive: var(--destructive);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* =========================
+   Design System
+========================= */
+
+:root {
+  --background: #0b0b0b;
+  --foreground: #ffffff;
+
+  --card: #121212;
+  --card-foreground: #ffffff;
+
+  --popover: #121212;
+  --popover-foreground: #ffffff;
+
+  --primary: #d7ff00;
+  --primary-foreground: #090909;
+
+  --secondary: #181818;
+  --secondary-foreground: #ffffff;
+
+  --muted: #181818;
+  --muted-foreground: #a1a1aa;
+
+  --accent: #202020;
+  --accent-foreground: #ffffff;
+
+  --destructive: #ef4444;
+
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #d7ff00;
+
+  --chart-1: #d7ff00;
+  --chart-2: #8b8b8b;
+  --chart-3: #666666;
+  --chart-4: #444444;
+  --chart-5: #2b2b2b;
+
+  --radius: 1rem;
+
+  --sidebar: #101010;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #d7ff00;
+  --sidebar-primary-foreground: #090909;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #d7ff00;
+}
+
+/* Dark uses same palette */
+
+.dark {
+  --background: #0b0b0b;
+  --foreground: #ffffff;
+
+  --card: #121212;
+  --card-foreground: #ffffff;
+
+  --popover: #121212;
+  --popover-foreground: #ffffff;
+
+  --primary: #d7ff00;
+  --primary-foreground: #090909;
+
+  --secondary: #181818;
+  --secondary-foreground: #ffffff;
+
+  --muted: #181818;
+  --muted-foreground: #a1a1aa;
+
+  --accent: #202020;
+  --accent-foreground: #ffffff;
+
+  --destructive: #ef4444;
+
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #d7ff00;
+
+  --chart-1: #d7ff00;
+  --chart-2: #8b8b8b;
+  --chart-3: #666666;
+  --chart-4: #444444;
+  --chart-5: #2b2b2b;
+
+  --sidebar: #101010;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #d7ff00;
+  --sidebar-primary-foreground: #090909;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #d7ff00;
+}
+
+/* =========================
+   Base
+========================= */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  ::selection {
+    background: #d7ff00;
+    color: #000;
+  }
 }
