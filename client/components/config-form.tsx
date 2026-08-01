@@ -61,11 +61,12 @@ const reminderOptions = [
 
 export default function ConfigForm({ workspaceId }: { workspaceId: string }) {
   const { data, isLoading } = useGetChannels({ workspaceId });
-  const { mutateAsync: configStandup, isPending } = useStandupConfig();
+  const { mutateAsync: configStandup } = useStandupConfig();
   const channels = useMemo(
     () => transformChannelsToOptions(data?.data ?? []),
     [data?.data],
   );
+  console.log(data);
   const form = useForm<TSetupFormValues>({
     resolver: zodResolver(ZSetupSchema),
     defaultValues: {
@@ -143,8 +144,12 @@ export default function ConfigForm({ workspaceId }: { workspaceId: string }) {
 
                 <Combobox
                   items={channels}
+                  value={
+                    channels.find((channel) => channel.value === field.value) ??
+                    null
+                  }
                   itemToStringValue={(channel: TChannel) => channel.label}
-                  onValueChange={(value) => field.onChange(value)}
+                  onValueChange={(value) => field.onChange(value?.value ?? "")}
                 >
                   <ComboboxInput
                     placeholder="Search a channel..."
@@ -161,7 +166,7 @@ export default function ConfigForm({ workspaceId }: { workspaceId: string }) {
                         <ComboboxEmpty>No items found</ComboboxEmpty>
                         <ComboboxList>
                           {(item: TChannel) => (
-                            <ComboboxItem key={item.label} value={item}>
+                            <ComboboxItem key={item.value} value={item.value}>
                               <ItemTitle className="whitespace-nowrap">
                                 {item.label}
                               </ItemTitle>
@@ -292,8 +297,8 @@ export default function ConfigForm({ workspaceId }: { workspaceId: string }) {
                     </h3>
 
                     <p className="mt-1 text-sm leading-6 text-neutral-400">
-                      Slack only lets apps discover private channels after
-                      they've been invited.
+                      Slack only lets apps discover private channels after they
+                      have been invited.
                     </p>
                   </div>
 

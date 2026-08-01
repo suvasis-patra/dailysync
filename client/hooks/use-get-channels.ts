@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetChannels = ({ workspaceId }: { workspaceId: string }) => {
   return useQuery({
-    queryKey: ["channels"],
+    queryKey: ["channels", workspaceId],
+    enabled: Boolean(workspaceId),
     queryFn: async () => await getWorkspaceChannels(workspaceId),
   });
 };
