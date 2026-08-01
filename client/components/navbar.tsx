@@ -65,7 +65,7 @@ export default function NavBar() {
 
         <div className="hidden md:block">
           <button
-            onClick={async () => await initiateSlackAuth()}
+            onClick={() => initiateSlackAuth()}
             data-testid="nav-cta-btn"
             className="rounded-full flex items-center gap-2 cursor-pointer bg-[#ccff00] px-5 py-2 text-sm font-semibold text-[#0a0a0a] transition-colors hover:bg-[#b3e600]"
           >

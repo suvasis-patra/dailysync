@@ -5,6 +5,11 @@ interface LenisInstance {
   ) => void;
 }
 
+export type TChannel = {
+  label: string;
+  value: string;
+};
+
 declare global {
   interface Window {
     __lenis?: LenisInstance;
