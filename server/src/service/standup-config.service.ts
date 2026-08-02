@@ -6,8 +6,10 @@ import { fetchChannelMembers, fetchWorkspaceUsers } from "./slack/user.service";
 
 export const configChannelStandup = async (data: TSetupFormValues) => {
   const { workspaceId, channelId, standupHour, standupMinute } = data;
-  const workspace = await prisma.workspace.findUnique({
-    where: { id: workspaceId },
+  const workspace = await prisma.workspace.findFirst({
+    where: {
+      OR: [{ id: workspaceId }, { slackTeamId: workspaceId }],
+    },
     select: {
       id: true,
       botToken: true,
