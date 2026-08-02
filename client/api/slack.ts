@@ -19,7 +19,7 @@ export const getWorkspaceChannels = async (workspaceId: string) => {
 
 export const configChannelStandup = async (data: TConfigChannelStandup) => {
   try {
-    const res = await axiosInstance.post("/config", data);
+    const res = await axiosInstance.post("/config/", data);
     return res.data;
   } catch (error) {
     console.log(error);
