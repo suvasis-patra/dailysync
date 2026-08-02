@@ -31,7 +31,7 @@ export const onboardWorkSpace = asyncHandler(
     try {
       const result = await installWorkSpace(code);
       redirectUrl.searchParams.set("oauth", "success");
-      redirectUrl.searchParams.set("workspaceId", result.slackTeamId);
+      redirectUrl.searchParams.set("workspaceId", result.id);
       return res.redirect(redirectUrl.toString());
     } catch (error) {
       redirectUrl.searchParams.set("oauth", "error");
