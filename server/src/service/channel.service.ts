@@ -44,8 +44,19 @@ export const fetchWorkspaceChannels = async (
 
 export const getChannels = async (workspaceId: string) => {
   try {
+    const workspace = await prisma.workspace.findFirst({
+      where: {
+        OR: [{ id: workspaceId }, { slackTeamId: workspaceId }],
+      },
+      select: { id: true },
+    });
+
+    if (!workspace) {
+      return [];
+    }
+
     const channels = await prisma.channel.findMany({
-      where: { workspaceId },
+      where: { workspaceId: workspace.id },
       orderBy: { name: "asc" },
     });
     return channels;
