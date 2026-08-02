@@ -144,10 +144,6 @@ export default function ConfigForm({ workspaceId }: { workspaceId: string }) {
 
                 <Combobox
                   items={channels}
-                  value={
-                    channels.find((channel) => channel.value === field.value) ??
-                    null
-                  }
                   itemToStringValue={(channel: TChannel) => channel.label}
                   onValueChange={(value) => field.onChange(value?.value ?? "")}
                 >
@@ -166,7 +162,7 @@ export default function ConfigForm({ workspaceId }: { workspaceId: string }) {
                         <ComboboxEmpty>No items found</ComboboxEmpty>
                         <ComboboxList>
                           {(item: TChannel) => (
-                            <ComboboxItem key={item.value} value={item.value}>
+                            <ComboboxItem key={item.value} value={item}>
                               <ItemTitle className="whitespace-nowrap">
                                 {item.label}
                               </ItemTitle>

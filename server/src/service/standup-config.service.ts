@@ -18,14 +18,20 @@ export const configChannelStandup = async (data: TSetupFormValues) => {
   if (!workspace) {
     throw new NotFoundError(`workspace with id ${workspaceId} not found`);
   }
-  const channel = await prisma.channel.findUnique({
-    where: { id: channelId, workspaceId },
+  const channel = await prisma.channel.findFirst({
+    where: {
+      workspaceId: workspace.id,
+      OR: [{ id: channelId }, { slackChannelId: channelId }],
+    },
   });
   if (!channel) {
     throw new NotFoundError(`channel with id ${channelId} not found`);
   }
   const client = createSlackClient(workspace.botToken);
-  const channelMemberIds = await fetchChannelMembers({ client, channelId });
+  const channelMemberIds = await fetchChannelMembers({
+    client,
+    channelId: channel.slackChannelId,
+  });
   const workspaceUsers = await fetchWorkspaceUsers(client);
   const channelUsers = workspaceUsers.filter((user) =>
     channelMemberIds.includes(user.id as string),
